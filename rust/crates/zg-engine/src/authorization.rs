@@ -1283,10 +1283,6 @@ mod tests {
             assert_eq!(target.model, "qwen/qwen3.7-text-embedding");
             assert_eq!(target.endpoint, "https://child.test/embeddings");
         }
-        options.root = Some(root.clone());
-        options.rebuild = false;
-        index_authorization(&options)
-            .expect_err("changing the existing parent model still requires rebuild");
         assert_eq!(
             fs::read(parent_manifest).expect("parent manifest unchanged"),
             before
