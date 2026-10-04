@@ -389,7 +389,6 @@ async function runDirectIndex(
     const infoBefore = await zvecGrep.info({
       root: rootPath.absolutePath,
       includeStatus: parsed.options.rebuild !== true,
-      exactRoot: true,
     });
     const schema = resolveAuthorizationSchema(
       configuredEmbeddingReference(

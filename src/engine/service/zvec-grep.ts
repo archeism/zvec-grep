@@ -469,17 +469,10 @@ class ZvecGrepService implements ZvecGrep {
   async info(options: ZvecGrepInfoOptions = {}): Promise<ZvecGrepInfoResult> {
     this.ensureOpen();
     const startRoot = resolveZvecGrepRoot(options.root ?? this.root);
-    let location: WorkspaceIndexLocation | null;
-    if (options.exactRoot) {
-      location = workspaceIndexLocation(startRoot);
-      assertHomeUnlocked(location.home, "info");
-      if (!readWorkspaceManifest(location.home)) location = null;
-    } else {
-      assertNearestWorkspaceHomeUnlocked(startRoot, "info");
-      location = findNearestWorkspaceIndex(startRoot)?.location ?? null;
-    }
+    assertNearestWorkspaceHomeUnlocked(startRoot, "info");
+    const nearest = findNearestWorkspaceIndex(startRoot);
 
-    if (!location) {
+    if (!nearest) {
       const location = workspaceIndexLocation(startRoot);
 
       return {
@@ -493,28 +486,27 @@ class ZvecGrepService implements ZvecGrep {
       };
     }
 
-    const indexLocation = location;
-    return await withHomeReadLock(indexLocation.home, "info", async () => {
-      const workspaceIndex = readWorkspaceManifest(indexLocation.home);
+    return await withHomeReadLock(nearest.location.home, "info", async () => {
+      const workspaceIndex = readWorkspaceManifest(nearest.location.home);
       const indexed =
         workspaceIndex !== null &&
         workspaceIndex.indexPolicy !== "disabled" &&
         isWorkspaceIndexed(workspaceIndex) &&
-        hasWorkspaceIndex(indexLocation);
+        hasWorkspaceIndex(nearest.location);
 
       return {
-        root: indexLocation.root,
+        root: nearest.location.root,
         indexed,
         indexPolicy: workspaceIndex?.indexPolicy ?? "undecided",
-        home: indexLocation.home,
-        indexPath: indexLocation.indexPath,
+        home: nearest.location.home,
+        indexPath: nearest.location.indexPath,
         source: indexed ? "index" : "unindexed",
         workspaceIndex: workspaceIndex
           ? workspaceIndexInfoFromManifest(workspaceIndex)
           : undefined,
         status:
           indexed && options.includeStatus !== false
-            ? await workspaceIndexStatus(workspaceIndex, indexLocation)
+            ? await workspaceIndexStatus(workspaceIndex, nearest.location)
             : null,
         suggestion: workspaceInfoSuggestion(workspaceIndex),
       };
