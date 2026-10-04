@@ -164,6 +164,18 @@ fn index_summary_uses_saved_scope_in_direct_and_server_modes() {
     }
 }
 
+fn manifest_without_update_time(path: &std::path::Path) -> serde_json::Value {
+    let mut manifest: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(path).expect("parent manifest"))
+            .expect("manifest JSON");
+    // A resident parent watcher can refresh its timestamp after child filesystem events.
+    manifest
+        .as_object_mut()
+        .expect("manifest object")
+        .remove("updatedTime");
+    manifest
+}
+
 #[test]
 fn explicit_nested_index_owns_its_scope_in_direct_and_server_modes() {
     for mode in ["direct", "server"] {
@@ -189,7 +201,7 @@ fn explicit_nested_index_owns_its_scope_in_direct_and_server_modes() {
             "*.rs",
         ]);
         let parent_manifest = fixture.root.path().join(".zvec-grep/manifest.json");
-        let parent_bytes = std::fs::read(&parent_manifest).expect("parent manifest");
+        let parent_before = manifest_without_update_time(&parent_manifest);
         let child = fixture.success(&[
             "--index",
             nested.to_str().expect("nested path"),
@@ -209,8 +221,8 @@ fn explicit_nested_index_owns_its_scope_in_direct_and_server_modes() {
         );
         assert!(nested.join(".zvec-grep/manifest.json").exists());
         assert_eq!(
-            std::fs::read(&parent_manifest).expect("parent manifest remains"),
-            parent_bytes,
+            manifest_without_update_time(&parent_manifest),
+            parent_before,
             "{mode}: child indexing preserves the parent manifest"
         );
     }
