@@ -1,0 +1,509 @@
+[
+  {
+    "id": "q01-en",
+    "intent": "signed-consent",
+    "language": "en",
+    "question": "For saved permission to send project contents to a remote embedding service, return JSON fields digest (the lowercase hash algorithm passed to the signing primitive), newKeyBytes (number of random bytes in a newly created signing key), and grantWithoutKey (whether checking a grant succeeds if no signing key exists).",
+    "expected": {
+      "digest": "sha256",
+      "newKeyBytes": 32,
+      "grantWithoutKey": false
+    },
+    "evidence": [
+      {
+        "path": "src/authorization/store.ts",
+        "start": 46,
+        "end": 54
+      },
+      {
+        "path": "src/authorization/store.ts",
+        "start": 233,
+        "end": 256
+      }
+    ],
+    "rationale": "Tests persistent consent integrity and missing-key behavior."
+  },
+  {
+    "id": "q02-en",
+    "intent": "disclosure-planning",
+    "language": "en",
+    "question": "For an already indexed project using the supported remote Qwen provider and a matching model, suppose a vector search finds modified files and autoUpdate is true. Return JSON fields operation and workspaceContent using the exact disclosure-plan strings, and queryText as a boolean indicating whether the question is disclosed.",
+    "expected": {
+      "operation": "query_and_index",
+      "workspaceContent": "changed",
+      "queryText": true
+    },
+    "evidence": [
+      {
+        "path": "src/authorization/planner.ts",
+        "start": 52,
+        "end": 105
+      }
+    ],
+    "rationale": "All preconditions force vector query plus incremental refresh."
+  },
+  {
+    "id": "q03-en",
+    "intent": "runtime-precedence",
+    "language": "en",
+    "question": "For a remote embedding model, the explicitly supplied endpoint is https://explicit.example, project endpoint is https://project.example, per-model configured endpoint is https://model.example, and environment endpoint is https://env.example. Return JSON fields selectedEndpoint and selectedWithoutExplicit (the selected endpoint after removing only the explicit value).",
+    "expected": {
+      "selectedEndpoint": "https://explicit.example",
+      "selectedWithoutExplicit": "https://project.example"
+    },
+    "evidence": [
+      {
+        "path": "src/engine/config.ts",
+        "start": 64,
+        "end": 94
+      }
+    ],
+    "rationale": "Valid URLs remove parsing ambiguity; tests precedence rather than identifier recall."
+  },
+  {
+    "id": "q04-en",
+    "intent": "ignore-generated-files",
+    "language": "en",
+    "question": "Inspect the built-in directory-name exclusions for collecting searchable files, before any user overrides. Return JSON booleans excludesDependencies for the directory name node_modules, excludesTranslations for translations, and excludesSource for src.",
+    "expected": {
+      "excludesDependencies": true,
+      "excludesTranslations": true,
+      "excludesSource": false
+    },
+    "evidence": [
+      {
+        "path": "src/engine/pipeline/indexing/scanner/index.ts",
+        "start": 49,
+        "end": 86
+      }
+    ],
+    "rationale": "Asks membership of built-in directory exclusions, not full scanner behavior."
+  },
+  {
+    "id": "q05-en",
+    "intent": "token-dense-chunking",
+    "language": "en",
+    "question": "When calculating indexing chunk sizes with maxInputTokens=1000 and text consisting of 2000 repeated Chinese characters, return JSON numbers maxChunkChars and chunkOverlapChars. Use the built-in density heuristic, not an external tokenizer.",
+    "expected": {
+      "maxChunkChars": 1000,
+      "chunkOverlapChars": 150
+    },
+    "evidence": [
+      {
+        "path": "src/engine/pipeline/indexing/input-budget.ts",
+        "start": 3,
+        "end": 81
+      }
+    ],
+    "rationale": "Dense text exceeds the early-length guard and selects 100 chars per100 tokens, with15percent overlap."
+  },
+  {
+    "id": "q06-en",
+    "intent": "merge-ranked-results",
+    "language": "en",
+    "question": "For combining retrieval results, return JSON fields rankOffset (the constant added to a recall rank before taking its reciprocal), usesRawSimilarity (whether this fusion formula directly adds raw similarity scores), and winner (the candidate ID ranked first when candidates a and z have equal fused scores).",
+    "expected": {
+      "rankOffset": 60,
+      "usesRawSimilarity": false,
+      "winner": "a"
+    },
+    "evidence": [
+      {
+        "path": "src/engine/pipeline/search/index.ts",
+        "start": 77,
+        "end": 77
+      },
+      {
+        "path": "src/engine/pipeline/search/index.ts",
+        "start": 1147,
+        "end": 1171
+      }
+    ],
+    "rationale": "Deterministic formula and ASCII ID tie break; no floating point answer needed."
+  },
+  {
+    "id": "q07-en",
+    "intent": "execution-fallback",
+    "language": "en",
+    "question": "For automatic command execution with serverAvailable returning false, return JSON booleans callsDirect and callsServer. Also return checksAvailabilityInExplicitServerMode: whether explicitly choosing server execution invokes the availability callback before dispatch.",
+    "expected": {
+      "callsDirect": true,
+      "callsServer": false,
+      "checksAvailabilityInExplicitServerMode": false
+    },
+    "evidence": [
+      {
+        "path": "src/client/mode-router.ts",
+        "start": 18,
+        "end": 28
+      }
+    ],
+    "rationale": "Tests automatic fallback and explicit-mode behavior without depending on actual network state."
+  },
+  {
+    "id": "q08-en",
+    "intent": "coalesce-background-work",
+    "language": "en",
+    "question": "A refresh scheduler has a running job for a project. Two more watch-triggered submissions arrive for that same project before it finishes. Return JSON numbers followupJobs (how many follow-up jobs are retained for these submissions) and defaultConcurrency, plus boolean reusedSecond (the reused field returned for the second new submission).",
+    "expected": {
+      "followupJobs": 1,
+      "defaultConcurrency": 1,
+      "reusedSecond": true
+    },
+    "evidence": [
+      {
+        "path": "src/daemon/job-scheduler.ts",
+        "start": 78,
+        "end": 115
+      }
+    ],
+    "rationale": "Running state excludes queued-job branch; both additional requests coalesce into one follow-up."
+  },
+  {
+    "id": "q09-en",
+    "intent": "resume-refresh",
+    "language": "en",
+    "question": "With default settings, the file-watching service checks for computer resume. Return JSON number thresholdMs and booleans reconcileAt90000 and reconcileAt90001 indicating whether exactly those elapsed milliseconds since the last resume check trigger a full reconciliation.",
+    "expected": {
+      "thresholdMs": 90000,
+      "reconcileAt90000": false,
+      "reconcileAt90001": true
+    },
+    "evidence": [
+      {
+        "path": "src/daemon/watch-manager.ts",
+        "start": 123,
+        "end": 128
+      }
+    ],
+    "rationale": "Boundary distinguishes strict greater-than from greater-than-or-equal."
+  },
+  {
+    "id": "q10-en",
+    "intent": "authorization-keepalive",
+    "language": "en",
+    "question": "For the progress keepalive around a long authorization wait, return JSON number defaultIntervalMs and booleans sendsWithoutProgressToken (whether notifications are sent with no progress token) and sendsBeforeOperation (whether the initial heartbeat is awaited before invoking the operation when a token exists and the request is not aborted).",
+    "expected": {
+      "defaultIntervalMs": 15000,
+      "sendsWithoutProgressToken": false,
+      "sendsBeforeOperation": true
+    },
+    "evidence": [
+      {
+        "path": "src/mcp/progress-heartbeat.ts",
+        "start": 3,
+        "end": 3
+      },
+      {
+        "path": "src/mcp/progress-heartbeat.ts",
+        "start": 18,
+        "end": 65
+      }
+    ],
+    "rationale": "Pins token and abort preconditions; verifies actual keepalive behavior."
+  },
+  {
+    "id": "q11-en",
+    "intent": "atomic-replacement",
+    "language": "en",
+    "question": "For atomic replacement of a saved file, assume every rename attempt fails with EBUSY. Return JSON number renameAttempts (total attempts including the final one), number totalRetryDelayMs (sum of scheduled retry waits), and boolean retriesENOENT (whether ENOENT is classified as a transient replacement error).",
+    "expected": {
+      "renameAttempts": 8,
+      "totalRetryDelayMs": 635,
+      "retriesENOENT": false
+    },
+    "evidence": [
+      {
+        "path": "src/engine/utils/atomic-file.ts",
+        "start": 4,
+        "end": 47
+      }
+    ],
+    "rationale": "Seven delays sum635; final rename adds eighth attempt."
+  },
+  {
+    "id": "q12-en",
+    "intent": "download-failover",
+    "language": "en",
+    "question": "For model artifact download errors, return JSON booleans fallbackHttp429, fallbackHttp401, and fallbackIntegrity according to whether those failures allow an alternative download source.",
+    "expected": {
+      "fallbackHttp429": true,
+      "fallbackHttp401": false,
+      "fallbackIntegrity": true
+    },
+    "evidence": [
+      {
+        "path": "src/engine/models/artifact-downloader.ts",
+        "start": 62,
+        "end": 85
+      }
+    ],
+    "rationale": "Directly tests retry-source policy, not a real download."
+  },
+  {
+    "id": "q13-en",
+    "intent": "reject-shell-expansion",
+    "language": "en",
+    "question": "While scanning a managed text-search command string into tokens, return JSON booleans rejectsNewline (a literal newline anywhere in the command), rejectsBackticksInDoubleQuotes (an unescaped backtick inside double quotes), and rejectsBackticksInSingleQuotes (a backtick inside single quotes). Consider the token scanner only, not later command validation.",
+    "expected": {
+      "rejectsNewline": true,
+      "rejectsBackticksInDoubleQuotes": true,
+      "rejectsBackticksInSingleQuotes": false
+    },
+    "evidence": [
+      {
+        "path": "src/cli/managed-rg.ts",
+        "start": 28,
+        "end": 91
+      }
+    ],
+    "rationale": "Scanner-only scope distinguishes safe literal quoting from shell expansion."
+  },
+  {
+    "id": "q14-en",
+    "intent": "match-enclosing-symbol",
+    "language": "en",
+    "question": "When enriching ordinary text matches with surrounding source structure, return JSON number defaultFileLimit and boolean keepsUnmatchedItem (whether an item is retained unchanged if no containing fragment is found). If a match on line30 is enclosed by fragments spanning lines1–100 and20–40, return chosenStartLine for the selected container.",
+    "expected": {
+      "defaultFileLimit": 100,
+      "keepsUnmatchedItem": true,
+      "chosenStartLine": 20
+    },
+    "evidence": [
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 15,
+        "end": 15
+      },
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 46,
+        "end": 83
+      },
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 202,
+        "end": 253
+      }
+    ],
+    "rationale": "Nested ranges eliminate overlap ambiguity and exercise smallest-container selection."
+  },
+  {
+    "id": "q15-en",
+    "intent": "restrict-listening-address",
+    "language": "en",
+    "question": "When constructing the background HTTP service, return JSON booleans acceptsLoopbackIPv4 for host127.0.0.1 and acceptsAllInterfacesIPv4 for host0.0.0.0, assuming every other option is valid. Also return rejectsBeforeStart indicating whether rejection of a non-loopback host occurs during construction rather than only when start is called.",
+    "expected": {
+      "acceptsLoopbackIPv4": true,
+      "acceptsAllInterfacesIPv4": false,
+      "rejectsBeforeStart": true
+    },
+    "evidence": [
+      {
+        "path": "src/daemon/http-server.ts",
+        "start": 46,
+        "end": 49
+      },
+      {
+        "path": "src/daemon/config.ts",
+        "start": 85,
+        "end": 92
+      }
+    ],
+    "rationale": "Tests constructor guard; loopback helper is additional evidence."
+  },
+  {
+    "id": "q16-en",
+    "intent": "blank-tool-search",
+    "language": "en",
+    "question": "During tool-search input normalization, all question fields and explicit routes are empty or whitespace. Return JSON boolean rejectsBlank. In a second request, an explicit vector route contains the string '  needle  '; all other question fields are empty. Return normalizedRouteQuery (the resulting route's query string) and rejectsSecond.",
+    "expected": {
+      "rejectsBlank": true,
+      "normalizedRouteQuery": "needle",
+      "rejectsSecond": false
+    },
+    "evidence": [
+      {
+        "path": "src/mcp/input-normalization.ts",
+        "start": 105,
+        "end": 134
+      }
+    ],
+    "rationale": "Other normalization fields assumed valid; tests whitespace handling and nonempty explicit route."
+  },
+  {
+    "id": "q10-zh",
+    "intent": "authorization-keepalive",
+    "language": "zh",
+    "question": "针对长时间授权等待的进度保活，返回 JSON 数字 defaultIntervalMs，以及布尔 sendsWithoutProgressToken（没有进度令牌时是否发送通知）和 sendsBeforeOperation（有令牌且请求未取消时，是否先等待初始保活通知发送，再调用操作）。",
+    "expected": {
+      "defaultIntervalMs": 15000,
+      "sendsWithoutProgressToken": false,
+      "sendsBeforeOperation": true
+    },
+    "evidence": [
+      {
+        "path": "src/mcp/progress-heartbeat.ts",
+        "start": 3,
+        "end": 3
+      },
+      {
+        "path": "src/mcp/progress-heartbeat.ts",
+        "start": 18,
+        "end": 65
+      }
+    ],
+    "rationale": "Pins token and abort preconditions; verifies actual keepalive behavior."
+  },
+  {
+    "id": "q13-zh",
+    "intent": "reject-shell-expansion",
+    "language": "zh",
+    "question": "把受管理的文本搜索命令字符串扫描成参数时，返回 JSON 布尔字段 rejectsNewline（命令任意位置的真实换行）、rejectsBackticksInDoubleQuotes（双引号内未转义的反引号）、rejectsBackticksInSingleQuotes（单引号内的反引号）。只考虑词元扫描器，不考虑后续命令校验。",
+    "expected": {
+      "rejectsNewline": true,
+      "rejectsBackticksInDoubleQuotes": true,
+      "rejectsBackticksInSingleQuotes": false
+    },
+    "evidence": [
+      {
+        "path": "src/cli/managed-rg.ts",
+        "start": 28,
+        "end": 91
+      }
+    ],
+    "rationale": "Scanner-only scope distinguishes safe literal quoting from shell expansion."
+  },
+  {
+    "id": "q14-zh",
+    "intent": "match-enclosing-symbol",
+    "language": "zh",
+    "question": "为普通文本匹配补充周围代码结构时，返回 JSON 数字 defaultFileLimit，以及布尔 keepsUnmatchedItem（找不到包含它的片段时是否原样保留该项）。若第30行的匹配同时被第1–100行和第20–40行的片段包含，返回所选容器的 chosenStartLine。",
+    "expected": {
+      "defaultFileLimit": 100,
+      "keepsUnmatchedItem": true,
+      "chosenStartLine": 20
+    },
+    "evidence": [
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 15,
+        "end": 15
+      },
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 46,
+        "end": 83
+      },
+      {
+        "path": "src/engine/service/structure-enrichment.ts",
+        "start": 202,
+        "end": 253
+      }
+    ],
+    "rationale": "Nested ranges eliminate overlap ambiguity and exercise smallest-container selection."
+  },
+  {
+    "id": "q01-zh",
+    "intent": "signed-consent",
+    "language": "zh",
+    "question": "对于保存的项目内容远程发送授权，返回 JSON 字段 digest（签名原语使用的小写哈希算法名）、newKeyBytes（新签名密钥的随机字节数）、grantWithoutKey（签名密钥不存在时授权检查是否成功）。",
+    "expected": {
+      "digest": "sha256",
+      "newKeyBytes": 32,
+      "grantWithoutKey": false
+    },
+    "evidence": [
+      {
+        "path": "src/authorization/store.ts",
+        "start": 46,
+        "end": 54
+      },
+      {
+        "path": "src/authorization/store.ts",
+        "start": 233,
+        "end": 256
+      }
+    ],
+    "rationale": "Tests persistent consent integrity and missing-key behavior."
+  },
+  {
+    "id": "q03-zh",
+    "intent": "runtime-precedence",
+    "language": "zh",
+    "question": "对于远程嵌入模型，显式 endpoint 是 https://explicit.example，项目 endpoint 是 https://project.example，每模型配置 endpoint 是 https://model.example，环境变量 endpoint 是 https://env.example。返回 JSON 字段 selectedEndpoint，以及仅移除显式值后选中的 selectedWithoutExplicit。",
+    "expected": {
+      "selectedEndpoint": "https://explicit.example",
+      "selectedWithoutExplicit": "https://project.example"
+    },
+    "evidence": [
+      {
+        "path": "src/engine/config.ts",
+        "start": 64,
+        "end": 94
+      }
+    ],
+    "rationale": "Valid URLs remove parsing ambiguity; tests precedence rather than identifier recall."
+  },
+  {
+    "id": "q05-zh",
+    "intent": "token-dense-chunking",
+    "language": "zh",
+    "question": "索引分块时 maxInputTokens=1000，文本由2000个重复的汉字组成。按内置密度启发式而非外部 tokenizer，返回 JSON 数字字段 maxChunkChars 和 chunkOverlapChars。",
+    "expected": {
+      "maxChunkChars": 1000,
+      "chunkOverlapChars": 150
+    },
+    "evidence": [
+      {
+        "path": "src/engine/pipeline/indexing/input-budget.ts",
+        "start": 3,
+        "end": 81
+      }
+    ],
+    "rationale": "Dense text exceeds the early-length guard and selects 100 chars per100 tokens, with15percent overlap."
+  },
+  {
+    "id": "q06-zh",
+    "intent": "merge-ranked-results",
+    "language": "zh",
+    "question": "合并检索结果时，返回 JSON 字段 rankOffset（对召回排名取倒数之前加上的常量）、usesRawSimilarity（融合公式是否直接累加原始相似度分数）、winner（候选 a 和 z 的融合分数相同时，排在前面的候选 ID）。",
+    "expected": {
+      "rankOffset": 60,
+      "usesRawSimilarity": false,
+      "winner": "a"
+    },
+    "evidence": [
+      {
+        "path": "src/engine/pipeline/search/index.ts",
+        "start": 77,
+        "end": 77
+      },
+      {
+        "path": "src/engine/pipeline/search/index.ts",
+        "start": 1147,
+        "end": 1171
+      }
+    ],
+    "rationale": "Deterministic formula and ASCII ID tie break; no floating point answer needed."
+  },
+  {
+    "id": "q08-zh",
+    "intent": "coalesce-background-work",
+    "language": "zh",
+    "question": "刷新调度器中某项目已有一个正在运行的任务。在它完成前，同一项目又收到两次由文件监听触发的提交。返回 JSON 数字字段 followupJobs（为这两次提交保留的后续任务数量）、defaultConcurrency，以及布尔字段 reusedSecond（第二次新提交返回的 reused 值）。",
+    "expected": {
+      "followupJobs": 1,
+      "defaultConcurrency": 1,
+      "reusedSecond": true
+    },
+    "evidence": [
+      {
+        "path": "src/daemon/job-scheduler.ts",
+        "start": 78,
+        "end": 115
+      }
+    ],
+    "rationale": "Running state excludes queued-job branch; both additional requests coalesce into one follow-up."
+  }
+]
