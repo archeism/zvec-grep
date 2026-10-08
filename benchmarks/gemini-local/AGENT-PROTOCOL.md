@@ -1,5 +1,24 @@
 # Real answering-agent comparison
 
+## Flash replay (2026-10-08)
+
+User-requested replay: set `ZG_AGENT_MODEL=gemini-3.8-flash`; default remains
+`gemini-3.1-pro-preview` for baseline reproducibility. Keep all questions,
+tools, indexes, low thinking, per-session and cohort limits, and two repetitions
+unchanged. A separate paired live preflight passed before the full96-session
+launch. Preserve it separately. Source/corpus hashes are checked again by the
+runner. Cross-model results are sequential cohorts, not randomized interleaving;
+latency differences may include provider/time effects. Equal named thinking
+levels do not imply equal internal compute across models.
+
+Flash standard pricing checked2026-10-08: $0.75/M input, $0.075/M cached input,
+$3.75/M output including thinking through2026-12-31. The analyzer selects rates
+from the recorded model and rejects unknown models instead of applying Pro prices.
+Sources: https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash and
+https://ai.google.dev/gemini-api/docs/pricing .
+
+## Original Pro cohort
+
 Question: can the same answering agent recover correct repository facts with
 native Potion retrieval versus the Gemini embedding adapter?
 

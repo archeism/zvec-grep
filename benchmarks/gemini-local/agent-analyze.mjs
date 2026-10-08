@@ -5,6 +5,13 @@ import { join } from 'node:path';
 const root = process.argv[2];
 assert.ok(root, 'usage: node agent-analyze.mjs EVIDENCE_DIRECTORY');
 const terminal = JSON.parse(await readFile(join(root, 'terminal.json'), 'utf8'));
+const manifest = JSON.parse(await readFile(join(root, 'manifest.json'), 'utf8'));
+// Standard USD/M tokens, checked 2026-10-08; Flash rates expire 2026-12-31.
+const rates = {
+  'gemini-3.1-pro-preview': { input: 2, cached: 0.2, output: 12 },
+  'gemini-3.8-flash': { input: 0.75, cached: 0.075, output: 3.75 },
+}[manifest.model];
+assert.ok(rates, 'Unknown model pricing; do not silently price as Pro');
 assert.equal(terminal.status, 'complete', 'Partial cohorts require explicit analysis');
 const cases = JSON.parse(await readFile(join(root, 'cases.json'), 'utf8'));
 const rows = terminal.records;
@@ -55,7 +62,7 @@ for (const arm of ['A', 'B']) {
     citedGoldRange: r.filter(x => x.evidenceOverlap).length,
     language: Object.fromEntries(['en', 'zh'].map(l => [l, { total: r.filter(x => x.language === l).length, correct: r.filter(x => x.language === l && x.exact).length }])),
     repetition: [0, 1].map(rep => ({ rep, total: r.filter(x => x.rep === rep).length, correct: r.filter(x => x.rep === rep && x.exact).length })),
-    tokens, generationEstimateUSD: ((tokens.input - tokens.cached) * 2 + tokens.cached * 0.2 + (tokens.candidates + tokens.thinking) * 12) / 1e6,
+    tokens, generationEstimateUSD: ((tokens.input - tokens.cached) * rates.input + tokens.cached * rates.cached + (tokens.candidates + tokens.thinking) * rates.output) / 1e6,
     embeddingEvents: embeddings[arm].length,
     embeddingInputTokens: embeddings[arm].reduce((s, x) => s + (x.usageMetadata?.promptTokenCount ?? 0), 0),
   };
