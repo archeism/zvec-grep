@@ -1,0 +1,194 @@
+[
+  {
+    "id": "q01-en",
+    "intent": "signed-consent",
+    "language": "en",
+    "query": "Where is permission to send a project's contents off-machine saved and checked for tampering?",
+    "expectedPaths": ["src/authorization/store.ts"],
+    "evidence": "hasGrant 46-54; grant 57-92"
+  },
+  {
+    "id": "q02-en",
+    "intent": "disclosure-planning",
+    "language": "en",
+    "query": "How does the program decide whether an operation will send only my question, changed source files, or the entire project to an external service?",
+    "expectedPaths": ["src/authorization/planner.ts"],
+    "evidence": "planRemoteIndexAuthorization 8-49; planRemoteSearchAuthorization 52-100"
+  },
+  {
+    "id": "q03-en",
+    "intent": "runtime-precedence",
+    "language": "en",
+    "query": "If an explicitly supplied service address conflicts with project settings and the environment, which value wins?",
+    "expectedPaths": ["src/engine/config.ts"],
+    "evidence": "resolveEmbeddingRuntimeOptions 64-94"
+  },
+  {
+    "id": "q04-en",
+    "intent": "ignore-generated-files",
+    "language": "en",
+    "query": "Where do we exclude downloaded dependencies, build output, temporary folders, and generated files from the searchable collection?",
+    "expectedPaths": ["src/engine/pipeline/indexing/scanner/index.ts"],
+    "evidence": "DEFAULT_IGNORED_DIRECTORY_NAMES 49-86; DEFAULT_IGNORED_FILE_PATTERNS 88 onward"
+  },
+  {
+    "id": "q05-en",
+    "intent": "token-dense-chunking",
+    "language": "en",
+    "query": "How are source passages made smaller when punctuation or non-English characters could overflow the model's input allowance?",
+    "expectedPaths": ["src/engine/pipeline/indexing/input-budget.ts"],
+    "evidence": "indexChunkOptions 10-25; isTokenDenseText 28-57; isTokenDenseWindow 60-81"
+  },
+  {
+    "id": "q06-en",
+    "intent": "merge-ranked-results",
+    "language": "en",
+    "query": "Where are matches from multiple retrieval methods combined into one ordered list without relying on their raw scores being comparable?",
+    "expectedPaths": ["src/engine/pipeline/search/index.ts"],
+    "evidence": "fuseCandidates 1147-1171"
+  },
+  {
+    "id": "q07-en",
+    "intent": "execution-fallback",
+    "language": "en",
+    "query": "When no background service is available, how does a command automatically fall back to doing the work in its own process?",
+    "expectedPaths": ["src/client/mode-router.ts"],
+    "evidence": "routeByMode 18-28"
+  },
+  {
+    "id": "q08-en",
+    "intent": "coalesce-background-work",
+    "language": "en",
+    "query": "What prevents repeated refresh requests for the same project from creating duplicate simultaneous background tasks?",
+    "expectedPaths": ["src/daemon/job-scheduler.ts"],
+    "evidence": "JobScheduler.submit 85-115"
+  },
+  {
+    "id": "q09-en",
+    "intent": "resume-refresh",
+    "language": "en",
+    "query": "How are possibly missed file changes recovered after the computer has been asleep for a while?",
+    "expectedPaths": ["src/daemon/watch-manager.ts"],
+    "evidence": "WatchManager.start 73-80; checkForResume 123-128"
+  },
+  {
+    "id": "q10-en",
+    "intent": "authorization-keepalive",
+    "language": "en",
+    "query": "What keeps a tool request alive while a person takes a long time to approve sending data away?",
+    "expectedPaths": ["src/mcp/progress-heartbeat.ts"],
+    "evidence": "withProgressHeartbeat 18-65"
+  },
+  {
+    "id": "q11-en",
+    "intent": "atomic-replacement",
+    "language": "en",
+    "query": "How do we replace a saved file without exposing half-written contents, including when another process temporarily blocks the rename?",
+    "expectedPaths": ["src/engine/utils/atomic-file.ts"],
+    "evidence": "replaceFileAtomically 6-21; renameWithTransientRetries 24-37"
+  },
+  {
+    "id": "q12-en",
+    "intent": "download-failover",
+    "language": "en",
+    "query": "Which failures while fetching model weights allow trying an alternative download host instead of immediately giving up?",
+    "expectedPaths": ["src/engine/models/artifact-downloader.ts"],
+    "evidence": "ArtifactDownloadError constructor 62-85"
+  },
+  {
+    "id": "q13-en",
+    "intent": "reject-shell-expansion",
+    "language": "en",
+    "query": "Where is a user-supplied text-search command split into arguments while rejecting shell substitutions and multiline commands?",
+    "expectedPaths": ["src/cli/managed-rg.ts"],
+    "evidence": "scanManagedRgCommand 28-100"
+  },
+  {
+    "id": "q14-en",
+    "intent": "match-enclosing-symbol",
+    "language": "en",
+    "query": "How does a plain text match gain information about the surrounding function or class, even when it was not found through semantic retrieval?",
+    "expectedPaths": ["src/engine/service/structure-enrichment.ts"],
+    "evidence": "enrichLexicalItemsWithStructure 23-97"
+  },
+  {
+    "id": "q15-en",
+    "intent": "restrict-listening-address",
+    "language": "en",
+    "query": "What stops the background HTTP service from listening on an address reachable from other computers?",
+    "expectedPaths": ["src/daemon/http-server.ts"],
+    "evidence": "DaemonHttpServer constructor 46-49"
+  },
+  {
+    "id": "q16-en",
+    "intent": "blank-tool-search",
+    "language": "en",
+    "query": "Where are empty or whitespace-only tool search requests rejected after the various question fields are collected?",
+    "expectedPaths": ["src/mcp/input-normalization.ts"],
+    "evidence": "normalizeSearchFields 106-122"
+  },
+  {
+    "id": "q01-zh",
+    "intent": "signed-consent",
+    "language": "zh",
+    "query": "允许把项目内容发送到外部的授权保存在哪里，又怎样检查它是否被篡改？",
+    "expectedPaths": ["src/authorization/store.ts"],
+    "evidence": "hasGrant 46-54; grant 57-92"
+  },
+  {
+    "id": "q03-zh",
+    "intent": "runtime-precedence",
+    "language": "zh",
+    "query": "显式传入的服务地址与项目设置和环境变量冲突时，最终采用哪个值？",
+    "expectedPaths": ["src/engine/config.ts"],
+    "evidence": "resolveEmbeddingRuntimeOptions 64-94"
+  },
+  {
+    "id": "q05-zh",
+    "intent": "token-dense-chunking",
+    "language": "zh",
+    "query": "当标点或非英文字符可能使模型输入超限时，源码片段是怎样被切得更小的？",
+    "expectedPaths": ["src/engine/pipeline/indexing/input-budget.ts"],
+    "evidence": "indexChunkOptions 10-25; isTokenDenseText 28-57; isTokenDenseWindow 60-81"
+  },
+  {
+    "id": "q06-zh",
+    "intent": "merge-ranked-results",
+    "language": "zh",
+    "query": "不同检索方式得到的匹配在哪里合并排序，而不要求它们的原始分数能直接比较？",
+    "expectedPaths": ["src/engine/pipeline/search/index.ts"],
+    "evidence": "fuseCandidates 1147-1171"
+  },
+  {
+    "id": "q08-zh",
+    "intent": "coalesce-background-work",
+    "language": "zh",
+    "query": "同一个项目反复收到刷新请求时，什么机制防止重复的后台任务同时运行？",
+    "expectedPaths": ["src/daemon/job-scheduler.ts"],
+    "evidence": "JobScheduler.submit 85-115"
+  },
+  {
+    "id": "q10-zh",
+    "intent": "authorization-keepalive",
+    "language": "zh",
+    "query": "用户花很长时间决定是否允许发送数据时，什么机制让工具请求不会因为等待而超时？",
+    "expectedPaths": ["src/mcp/progress-heartbeat.ts"],
+    "evidence": "withProgressHeartbeat 18-65"
+  },
+  {
+    "id": "q13-zh",
+    "intent": "reject-shell-expansion",
+    "language": "zh",
+    "query": "用户提供的文本搜索命令在哪里被拆成参数，同时禁止命令替换和多行命令？",
+    "expectedPaths": ["src/cli/managed-rg.ts"],
+    "evidence": "scanManagedRgCommand 28-100"
+  },
+  {
+    "id": "q14-zh",
+    "intent": "match-enclosing-symbol",
+    "language": "zh",
+    "query": "一个普通文本匹配怎样获得它所在函数或类的信息，即使它不是通过语义检索找到的？",
+    "expectedPaths": ["src/engine/service/structure-enrichment.ts"],
+    "evidence": "enrichLexicalItemsWithStructure 23-97"
+  }
+]
