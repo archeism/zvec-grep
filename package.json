@@ -1,17 +1,17 @@
 {
-  "name": "@zvec/zvec-grep",
-  "version": "0.2.2",
-  "description": "Agent-friendly hybrid workspace search across code and non-code content.",
+  "name": "@charfeng1/zgrep",
+  "version": "0.2.2-gemini.1",
+  "description": "Pinned zvec-grep fork with Gemini Embedding 2 support.",
   "type": "module",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zvec-ai/zvec-grep.git"
+    "url": "git+https://github.com/archeism/zvec-grep.git"
   },
   "bugs": {
-    "url": "https://github.com/zvec-ai/zvec-grep/issues"
+    "url": "https://github.com/archeism/zvec-grep/issues"
   },
-  "homepage": "https://github.com/zvec-ai/zvec-grep#readme",
+  "homepage": "https://github.com/archeism/zvec-grep#readme",
   "publishConfig": {
     "access": "public"
   },
@@ -28,6 +28,8 @@
     "zg": "dist/cli/index.js"
   },
   "files": [
+    "FORK.md",
+    "VERIFICATION.md",
     "README.md",
     "README_CN.md",
     "LICENSE",
@@ -82,5 +84,8 @@
   },
   "optionalDependencies": {
     "node-llama-cpp": "3.18.1"
-  }
+  },
+  "trustedDependencies": [
+    "@zvec/zvec"
+  ]
 }

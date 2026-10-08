@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { readFileSync } from "node:fs";
 import { EngineError } from "./errors.js";
 import { readJsonFileSync, writeJsonFileSync } from "./utils/json.js";
 import { acquireReadWriteLock } from "./utils/lock.js";
@@ -471,8 +472,21 @@ function environmentApiKey(
           environment.DASHSCOPE_API_KEY,
           environment.QWEN_API_KEY,
         ]
-      : [environment.ZVEC_GREP_API_KEY];
-  return values.map(nonEmptyEnvironmentValue).find(Boolean);
+      : provider === "google"
+        ? [environment.ZVEC_GREP_API_KEY, environment.GEMINI_API_KEY]
+        : [environment.ZVEC_GREP_API_KEY];
+  return (
+    values.map(nonEmptyEnvironmentValue).find(Boolean) ??
+    (provider === "google"
+      ? apiKeyFromFile(environment.GEMINI_API_KEY_FILE)
+      : undefined)
+  );
+}
+
+function apiKeyFromFile(path: string | undefined): string | undefined {
+  const normalized = nonEmptyEnvironmentValue(path);
+  if (!normalized) return undefined;
+  return nonEmptyEnvironmentValue(readFileSync(normalized, "utf8"));
 }
 
 function nonEmptyEnvironmentValue(

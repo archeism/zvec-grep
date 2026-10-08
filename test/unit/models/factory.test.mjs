@@ -8,6 +8,7 @@ import {
   QwenTextEmbeddingV4Model,
 } from "../../../dist/engine/models/backends/qwen.js";
 import { TransformersJsEmbeddingModel } from "../../../dist/engine/models/backends/transformers-js.js";
+import { GeminiEmbedding2Model } from "../../../dist/engine/models/backends/google.js";
 import { listEmbeddingModels } from "../../../dist/engine/models/catalog.js";
 import { createEmbeddingModel } from "../../../dist/engine/models/factory.js";
 
@@ -19,6 +20,7 @@ test("embedding factory resolves catalog entries and rejects unknown models", ()
     ["qwen/text-embedding-v4", QwenTextEmbeddingV4Model],
     ["qwen/qwen3.7-text-embedding", Qwen37TextEmbeddingModel],
     ["qwen/qwen3-vl-embedding", Qwen3VlEmbeddingModel],
+    ["google/gemini-embedding-2", GeminiEmbedding2Model],
     ["local/bge-small-en-v1.5", TransformersJsEmbeddingModel],
     ["local/all-minilm-l6-v2", TransformersJsEmbeddingModel],
     ["local/potion-retrieval-32m", Model2VecEmbeddingModel],
@@ -49,7 +51,9 @@ test("embedding factory resolves catalog entries and rejects unknown models", ()
     assert.equal(model.info.metric, entry.metric);
     assert.equal(
       model.info.endpoint,
-      entry.backend === "qwen" ? options.endpoint : undefined,
+      entry.backend === "qwen" || entry.backend === "google"
+        ? options.endpoint
+        : undefined,
     );
   }
 

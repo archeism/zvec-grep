@@ -1,3 +1,10 @@
+# @charfeng1/zgrep — Gemini-enabled fork
+
+Unofficial pinned fork of zvec-grep 0.2.2 with Gemini Embedding 2 support.
+See [FORK.md](./FORK.md) for installation, credentials, provenance and limitations.
+The original upstream documentation below describes the unmodified base product;
+its npm installation commands install upstream, not this fork.
+
 <p align="right">
   English | <a href="./README_CN.md">中文</a>
 </p>

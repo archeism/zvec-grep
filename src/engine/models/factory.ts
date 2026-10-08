@@ -1,6 +1,7 @@
 import { EngineError } from "../errors.js";
 import {
   getEmbeddingModelCatalogEntry,
+  type GoogleEmbeddingCatalogEntry,
   type QwenEmbeddingCatalogEntry,
 } from "./catalog.js";
 import type {
@@ -15,6 +16,7 @@ import {
   QwenTextEmbeddingV4Model,
 } from "./backends/qwen.js";
 import { TransformersJsEmbeddingModel } from "./backends/transformers-js.js";
+import { GeminiEmbedding2Model } from "./backends/google.js";
 
 export function createEmbeddingModel(
   reference: string,
@@ -37,9 +39,18 @@ export function createEmbeddingModel(
       return new TransformersJsEmbeddingModel(catalogEntry, options);
     case "qwen":
       return createQwenEmbeddingModel(catalogEntry, options);
+    case "google":
+      return createGoogleEmbeddingModel(catalogEntry, options);
     default:
       return unsupportedCatalogEntry(catalogEntry);
   }
+}
+
+function createGoogleEmbeddingModel(
+  entry: GoogleEmbeddingCatalogEntry,
+  options: CreateEmbeddingModelOptions,
+): EmbeddingModel {
+  return new GeminiEmbedding2Model(entry, options);
 }
 
 function createQwenEmbeddingModel(

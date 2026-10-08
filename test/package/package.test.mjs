@@ -92,8 +92,8 @@ test("npm package contains and exposes the supported public surface", async (t) 
       join(
         consumerDirectory,
         "node_modules",
-        "@zvec",
-        "zvec-grep",
+        "@charfeng1",
+        "zgrep",
         "package.json",
       ),
       "utf8",
@@ -115,8 +115,8 @@ test("npm package contains and exposes the supported public surface", async (t) 
       join(
         consumerDirectory,
         "node_modules",
-        "@zvec",
-        "zvec-grep",
+        "@charfeng1",
+        "zgrep",
         "dist",
         "cli",
         "index.js",
@@ -193,7 +193,7 @@ test("npm package contains and exposes the supported public surface", async (t) 
     [
       "--input-type=module",
       "--eval",
-      "import { createEmbeddingModel, createZvecGrep, EmbeddingPurpose } from '@zvec/zvec-grep'; if (typeof createZvecGrep !== 'function' || typeof createEmbeddingModel !== 'function' || EmbeddingPurpose.Query !== 'query') process.exit(1);",
+      "import { createEmbeddingModel, createZvecGrep, EmbeddingPurpose } from '@charfeng1/zgrep'; if (typeof createZvecGrep !== 'function' || typeof createEmbeddingModel !== 'function' || EmbeddingPurpose.Query !== 'query') process.exit(1);",
     ],
     { cwd: consumerDirectory },
   );
@@ -203,15 +203,15 @@ test("npm package contains and exposes the supported public surface", async (t) 
   await writeFile(
     typeFixture,
     [
-      "import { createEmbeddingModel, createZvecGrep } from '@zvec/zvec-grep';",
-      "import type { EmbeddingModel, EmbeddingOptions, EmbeddingResult } from '@zvec/zvec-grep';",
+      "import { createEmbeddingModel, createZvecGrep } from '@charfeng1/zgrep';",
+      "import type { EmbeddingModel, EmbeddingOptions, EmbeddingResult } from '@charfeng1/zgrep';",
       "void createZvecGrep;",
       "const model: EmbeddingModel = createEmbeddingModel('local/embeddinggemma-300m');",
       "const options: EmbeddingOptions = { purpose: 'query' };",
       "const result: Promise<EmbeddingResult> = model.embed([{ kind: 'text', text: 'query' }], options);",
       "void result;",
       "// @ts-expect-error ranking types are internal until a public ranking factory exists",
-      "type RankingModel = import('@zvec/zvec-grep').RankingModel;",
+      "type RankingModel = import('@charfeng1/zgrep').RankingModel;",
       "void (undefined as unknown as RankingModel);",
       "",
     ].join("\n"),

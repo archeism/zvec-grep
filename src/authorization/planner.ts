@@ -12,7 +12,7 @@ export async function planRemoteIndexAuthorization(input: {
   needsUpdate?: boolean;
   store?: RemoteEmbeddingAuthorizationStore;
 }): Promise<RemoteEmbeddingAuthorizationPlan | undefined> {
-  if (input.model.provider !== "qwen") return undefined;
+  if (input.model.provider === "local") return undefined;
   const needsEmbedding =
     input.rebuild === true ||
     input.needsUpdate === true ||
@@ -57,7 +57,7 @@ export async function planRemoteSearchAuthorization(input: {
   store?: RemoteEmbeddingAuthorizationStore;
 }): Promise<RemoteEmbeddingAuthorizationPlan | undefined> {
   const schema = input.info.workspaceIndex?.embedding;
-  if (!input.info.indexed || !schema || schema.provider !== "qwen") {
+  if (!input.info.indexed || !schema || schema.provider === "local") {
     return undefined;
   }
   if (

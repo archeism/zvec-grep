@@ -42,6 +42,9 @@ const ENVIRONMENT_VARIABLES = {
   ZVEC_GREP_DEVICE: "Local embedding device: auto, cpu, metal, vulkan, or cuda",
   DASHSCOPE_API_KEY: "Qwen credential fallback after ZVEC_GREP_API_KEY",
   QWEN_API_KEY: "Qwen credential fallback after DASHSCOPE_API_KEY",
+  GEMINI_API_KEY: "Google credential fallback after ZVEC_GREP_API_KEY",
+  GEMINI_API_KEY_FILE:
+    "File containing the Google credential; used after GEMINI_API_KEY",
   ZVEC_GREP_AUTHORIZATION_KEY_FILE:
     "Workspace grant signing-key file (advanced)",
   ZVEC_GREP_METAL_KEEP_RESIDENCY:
@@ -545,6 +548,9 @@ ${formatEnvironmentVariables([
 
 Qwen credential aliases:
 ${formatEnvironmentVariables(["DASHSCOPE_API_KEY", "QWEN_API_KEY"])}
+
+Google credential aliases:
+${formatEnvironmentVariables(["GEMINI_API_KEY", "GEMINI_API_KEY_FILE"])}
 
 State and authorization:
 ${formatEnvironmentVariables([

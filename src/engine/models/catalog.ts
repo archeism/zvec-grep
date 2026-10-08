@@ -2,6 +2,8 @@ const DEFAULT_QWEN_TEXT_EMBEDDING_ENDPOINT =
   "https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings";
 const DEFAULT_QWEN3_VL_EMBEDDING_ENDPOINT =
   "https://dashscope.aliyuncs.com/api/v1/services/embeddings/multimodal-embedding/multimodal-embedding";
+const DEFAULT_GEMINI_EMBEDDING_2_ENDPOINT =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent";
 
 export const EMBEDDING_MODEL_CATALOG = {
   "local/embeddinggemma-300m": {
@@ -106,6 +108,19 @@ export const EMBEDDING_MODEL_CATALOG = {
     maxBatchSize: 20,
     maxInputTokens: 32000,
     maxImageBytes: 10 * 1024 * 1024,
+  },
+
+  "google/gemini-embedding-2": {
+    backend: "google",
+    kind: "text",
+    reference: "google/gemini-embedding-2",
+    provider: "google",
+    model: "gemini-embedding-2",
+    dimension: 3072,
+    metric: "cosine",
+    defaultEndpoint: DEFAULT_GEMINI_EMBEDDING_2_ENDPOINT,
+    maxBatchSize: 20,
+    maxInputTokens: 8192,
   },
 
   "local/bge-small-en-v1.5": {
@@ -595,6 +610,11 @@ export type QwenTextEmbeddingCatalogEntry = Extract<
 export type QwenMultimodalEmbeddingCatalogEntry = Extract<
   QwenEmbeddingCatalogEntry,
   { kind: "multimodal" }
+>;
+
+export type GoogleEmbeddingCatalogEntry = Extract<
+  EmbeddingCatalogEntry,
+  { backend: "google" }
 >;
 
 export type EmbeddingModelCatalogId = keyof typeof EMBEDDING_MODEL_CATALOG;
