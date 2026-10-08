@@ -15,6 +15,14 @@ It does not include the upstream Rust rewrite or subsequent upstream fixes.
 
 ## Use
 
+**Experimental release:** an npm production-dependency audit of the pinned
+upstream lockfile reports 11 advisories (3 critical, 3 high, 5 moderate). Critical
+findings involve the optional local-model `node-llama-cpp` / `simple-git` chain;
+other findings include the MCP OAuth client and image/local-model dependencies.
+This release does not remediate them. Use the verified Gemini/direct CLI path;
+do not treat this package as a hardened general-purpose MCP/local-model service.
+See [VERIFICATION.md](./VERIFICATION.md) for the scope of checks.
+
 Node.js 22+ is required. This retains upstream native dependencies and platform
 restrictions. Do not install alongside another package owning the `zg` binary.
 Install the release tarball:

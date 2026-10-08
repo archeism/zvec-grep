@@ -19,6 +19,11 @@
   performance claim is made. This is a functionality check, not a retrieval eval.
 
 Observed failures retained as limitations/evidence:
+- Post-build `npm audit --omit=dev` on the pinned source lockfile reports
+  11 inherited advisories: 3 critical, 3 high, 5 moderate. Critical chains are
+  optional node-llama-cpp/simple-git; high findings include MCP client OAuth and
+  transformers/sharp. No clean security-audit claim is made. The release page and
+  current fork docs carry this notice; dependency remediation is not included.
 - A first supervised run used the service's Node 18 PATH instead of Node 22;
   explicitly passing the invoking PATH fixed the test runner.
 - A 64-task ceiling caused a native abort; the 512-task ceiling completed.
