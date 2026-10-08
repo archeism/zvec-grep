@@ -1,4 +1,4 @@
-# Release verification: 0.2.2-gemini.1
+# Release verification: 0.2.2-gemini.2
 
 2026-10-08, Linux x64, Node 22.23.1, Bun 1.3.14.
 
@@ -19,6 +19,14 @@
   performance claim is made. This is a functionality check, not a retrieval eval.
 
 Observed failures retained as limitations/evidence:
+- The broader root suite on candidate gemini.1 had 244 passes and one custom
+  offline-model HTTP test failure. Independent baseline reproduction passed.
+  gemini.2 narrows consent gates to Google/Qwen rather than treating every custom
+  provider as remote; the existing HTTP regression test covers this boundary.
+  Corrected HTTP + Google/Qwen authorization rerun: 8/8 passed (15.78 seconds).
+  The full root suite was not rerun after this correction; no full-suite green
+  claim is made.
+  gemini.1 was not published to npm; its GitHub candidate remains for history.
 - Post-build `npm audit --omit=dev` on the pinned source lockfile reports
   11 inherited advisories: 3 critical, 3 high, 5 moderate. Critical chains are
   optional node-llama-cpp/simple-git; high findings include MCP client OAuth and

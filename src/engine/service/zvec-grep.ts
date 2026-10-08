@@ -1431,7 +1431,7 @@ function createServiceEmbeddingModel(
   serviceOptions: CreateZvecGrepOptions,
 ): EmbeddingModel {
   const model = createEmbeddingModel(reference, modelOptions);
-  if (model.info.provider === "local") {
+  if (model.info.provider !== "qwen" && model.info.provider !== "google") {
     return model;
   }
 

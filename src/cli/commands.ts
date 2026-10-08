@@ -408,7 +408,7 @@ async function runDirectIndex(
       parsed.options.rebuild === true,
     );
     const modelInfo =
-      schema && schema.provider !== "local"
+      schema && (schema.provider === "qwen" || schema.provider === "google")
         ? await embeddingModelInfo(schema, serviceOptions, workspaceRuntime)
         : undefined;
     const plan = modelInfo
@@ -714,7 +714,9 @@ async function runDirectQuery(
     const schema = info.workspaceIndex?.embedding;
     const workspaceRuntime = workspaceRuntimeFromInfo(info);
     const modelInfo =
-      !commandOptions.rg && schema && schema.provider !== "local"
+      !commandOptions.rg &&
+      schema &&
+      (schema.provider === "qwen" || schema.provider === "google")
         ? await embeddingModelInfo(
             schema,
             createServiceOptions(commandOptions, info.root),

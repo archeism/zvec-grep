@@ -1,6 +1,6 @@
 {
   "name": "@charfeng1/zgrep",
-  "version": "0.2.2-gemini.1",
+  "version": "0.2.2-gemini.2",
   "description": "Pinned zvec-grep fork with Gemini Embedding 2 support.",
   "type": "module",
   "license": "Apache-2.0",

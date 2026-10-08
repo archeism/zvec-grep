@@ -1,6 +1,6 @@
 # Gemini package
 
-`@charfeng1/zgrep@0.2.2-gemini.1` is an unofficial, Apache-2.0 fork of
+`@charfeng1/zgrep@0.2.2-gemini.2` is an unofficial, Apache-2.0 fork of
 `@zvec/zvec-grep@0.2.2`, upstream commit
 `b1a9148e26a7bc9bd4a52229ffb7532d3063793d`.
 The original history and LICENSE are retained.
@@ -28,7 +28,7 @@ restrictions. Do not install alongside another package owning the `zg` binary.
 Install the release tarball:
 
 ```sh
-bun install -g https://github.com/archeism/zvec-grep/releases/download/v0.2.2-gemini.1/charfeng1-zgrep-0.2.2-gemini.1.tgz
+bun install -g https://github.com/archeism/zvec-grep/releases/download/v0.2.2-gemini.2/charfeng1-zgrep-0.2.2-gemini.2.tgz
 ```
 
 If Bun reports blocked lifecycle scripts, follow its trust prompt for the
@@ -75,7 +75,8 @@ known limitation requiring a separate investigation.
 
 ## Changelog
 
-### 0.2.2-gemini.1
+### 0.2.2-gemini.2
 - Added installable Gemini Embedding 2 adapter, credential-file support and tests.
-- Applied existing remote authorization to all non-local providers.
+- Applied existing remote authorization to Google as well as Qwen, preserving
+  custom offline SDK models.
 - Hardened cancellation, cache identity/validation and diagnostic redaction.
